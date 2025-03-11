@@ -37,7 +37,7 @@ def main():
 
     # Add refresh button
     if st.button("🔄 Refresh Dashboard"):
-        st.experimental_rerun()
+        st.rerun()
 
 if __name__ == "__main__":
     main() 
