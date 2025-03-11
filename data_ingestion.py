@@ -47,11 +47,11 @@ def process_assets_and_labels(project_id):
     # Retrieve labels for the assets with specific fields and types
     labels = pd.DataFrame(kili.labels(project_id=project_id, 
                                     asset_external_id_strictly_in=externalIds,
-                                    fields=("assetId", "secondsToLabel", "jsonResponse", "author.email", "createdAt"),
+                                    fields=("assetId", "secondsToLabel", "jsonResponse", "author.firstname", "author.lastname", "createdAt"),
                                     type_in=["DEFAULT", "REVIEW"]))
     
     # Extract email from author field
-    labels["author"] = labels["author"].apply(lambda x: x["email"])
+    labels["author"] = labels["author"].apply(lambda x: x["firstname"] + " " + x["lastname"])
 
     # Process each asset to add label information
     for asset in assets:
@@ -97,15 +97,7 @@ def process_assets_and_labels(project_id):
     # Extract source and domain from jsonMetadata
     assets_df["source"] = assets_df["jsonMetadata"].apply(lambda x: x["source"].split("_")[0])
     assets_df["domain"] = assets_df["jsonMetadata"].apply(lambda x: x.get("domain", float('nan')))
-    
-    # Store full email and extract username
-    assets_df["email"] = assets_df["author"]
-    try:
-        assets_df["author"] = assets_df["author"].apply(lambda x: x.split("@")[0])
-    except Exception as e:
-        print(f"Failed to split author email: {e}")
-        print("Problematic rows:")
-        print(assets_df[pd.isna(assets_df["author"])])
+
 
     # Convert creation date to datetime
     assets_df["createdAt"] = pd.to_datetime(assets_df["createdAt"])
