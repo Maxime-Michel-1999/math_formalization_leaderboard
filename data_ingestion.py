@@ -50,6 +50,7 @@ def process_assets_and_labels(project_id):
                                     fields=("assetId", "secondsToLabel", "jsonResponse", "author.firstname", "author.lastname", "createdAt"),
                                     type_in=["DEFAULT", "REVIEW"]))
     
+        
     # Extract email from author field
     labels["author"] = labels["author"].apply(lambda x: x["firstname"] + " " + x["lastname"])
 
@@ -97,6 +98,11 @@ def process_assets_and_labels(project_id):
     # Extract source and domain from jsonMetadata
     assets_df["source"] = assets_df["jsonMetadata"].apply(lambda x: x["source"].split("_")[0])
     assets_df["domain"] = assets_df["jsonMetadata"].apply(lambda x: x.get("domain", float('nan')))
+
+    # Extract time taken
+    assets_df["estimated_time_taken"] = assets_df.apply(lambda x: x["jsonResponse"].get("CLASSIFICATION_JOB_3", {}).get("categories", [{}])[0].get("name"), axis=1)
+    # Classify unknown source as AIME or AMC 
+    assets_df["source"] = assets_df.apply(lambda x: "AMC" if x["source"] == "problem" and x["estimated_time_taken"] == "30_MINUTES_AMC_0" else "AIME" if x["source"] == "problem" else x["source"], axis=1)
 
 
     # Convert creation date to datetime

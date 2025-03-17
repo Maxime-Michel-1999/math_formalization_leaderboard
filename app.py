@@ -19,6 +19,7 @@ def main():
     # Load and process data
     assets_df, assets_df_finished = process_assets_and_labels(project_id)
     assets_df = add_points_column(assets_df)
+    
 
     # Display title and points explanation
     st.title("🏆 Lean 4 Contribution Leaderboard")
