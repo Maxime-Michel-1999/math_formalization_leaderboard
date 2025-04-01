@@ -18,7 +18,6 @@ def safe_extract_status(latest_label):
     except (TypeError, KeyError):
         return float('nan')
     
-@st.cache_data
 def process_assets_and_labels(project_id):
     """
     Process assets and labels from a Kili project to create structured dataframes.
